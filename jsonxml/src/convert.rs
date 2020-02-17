@@ -5,13 +5,10 @@ extern crate serde_json;
 use quick_xml::events::{BytesEnd, BytesStart, BytesText, Event};
 use quick_xml::Writer;
 use serde_json::Value;
+use std::io::{Cursor, Error, Write};
 
-use std::io::Cursor;
-use std::io::Write;
-use std::string::FromUtf8Error;
-
-pub fn convert_json_xml(data: &str) -> Result<String, FromUtf8Error> {
-    let value: Value = serde_json::from_str(data).unwrap();
+pub fn convert_json_xml(data: &str) -> Result<String, Error> {
+    let value: Value = serde_json::from_str(data)?;
     let mut writer = Writer::new_with_indent(Cursor::new(Vec::new()), ' ' as u8, 2);
     convert_json_key_value_xml("Json", &value, &mut writer);
     let result = writer.into_inner().into_inner();
